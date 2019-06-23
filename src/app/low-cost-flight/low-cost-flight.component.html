@@ -1,0 +1,93 @@
+<div *ngIf="loading" class="loading"><em>Loading data</em></div>
+
+<form class="form" (ngSubmit)="fetchData()">
+  <div class="form-row">
+    <div class="col">
+      <div class="form-group">
+        <label for="origin">Polazni aerodrom <span class="field-required">*</span></label>
+        <input type="text" name="origin" [(ngModel)]="origin" placeholder="IATA šifra" class="form-control">
+      </div>
+
+      <div class="form-group">
+        <label for="destination">Odredišni aerodrom <span class="field-required">*</span></label>
+        <input type="text" name="destination" [(ngModel)]="destination" placeholder="IATA šifra" class="form-control">
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="form-group">
+        <label for="departureDate">Datum polaska <span class="field-required">*</span></label>
+        <ng-datepicker name="departureDate" [(ngModel)]="departureDate" [ngModelOptions]="{standalone: true}"></ng-datepicker>
+      </div>
+
+      <div class="form-group">
+        <label for="returnDate">Datum povratka</label>
+        <ng-datepicker name="returnDate" [(ngModel)]="returnDate" [ngModelOptions]="{standalone: true}"></ng-datepicker>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="form-group">
+        <label for="passengers">Broj putnika</label>
+        <select name="passengers" [(ngModel)]="selectedPassengers" (change)="selectPassengers($event.target.value)" class="form-control">
+          <option *ngFor="let pass of passengers" value="{{pass}}">{{pass}}</option>
+        </select>
+      </div>
+    
+      <div class="form-group">
+        <label for="valuta">Valuta</label>
+        <select name="valuta" [(ngModel)]="selectedCurrency" (change)="selectCurrency($event.target.value)" class="form-control">
+          <option *ngFor="let curr of currency" value="{{curr}}">{{curr}}</option>
+        </select>
+      </div>
+    </div>    
+
+    <div class="col">
+      <div class="form-group">
+        <label for="zaPrikaz">Broj zapisa za prikaz</label>
+        <select name="zaPrikaz" [(ngModel)]="zaPrikazSelected" (change)="selectZaPrikaz($event.target.value)" class="form-control">
+          <option *ngFor="let pr of zaPrikaz" value="{{pr}}">{{pr}}</option>
+        </select>
+      </div>
+
+      <div class="form-group frmGrCustom">
+        <input type="submit" value="Submit" class="btn btn-primary" />
+      </div>      
+    </div>
+  </div>  
+</form>
+
+<hr>
+
+<table class='table table-bordered' *ngIf="flightsModel">
+  <thead>
+    <tr>
+      <th>Polazište</th>
+      <th>Destinacija</th>
+      <th>Polazak</th>
+      <th>Povratak</th>
+      <th colspan="2">Presjedanja polazak/povratak</th>
+      <th>Slobodnih mjesta</th>
+      <th>Valuta</th>
+      <th>Cijena</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngIf="flightsModel.length == 0"><td colspan="9" class="text-center lead">Nema pronađenih letova</td></tr>
+
+    <tr *ngFor="let flight of flightsModel">
+      <td>{{ flight.PolazniAerodrom }}</td>
+      <td>{{ flight.OdredisniAerodrom }}</td>
+      <td>{{ flight.DatumPolaska }}</td>
+      <td>{{ flight.DatumPovratka }}</td>
+      <td *ngIf="flight.BrojPresjedanjaOdlazak != 0">{{ flight.BrojPresjedanjaOdlazak }}</td>
+      <td *ngIf="flight.BrojPresjedanjaOdlazak == 0">Direct</td>
+      <td>{{ flight.BrojPresjedanjaPovratak }}</td>
+      <td>{{ flight.BrojPutnika }}</td>
+      <td>{{ flight.Valuta }}</td>
+      <td *ngIf="flight.Valuta == 'HRK'">{{ flight.UkupnaCijena }}</td>
+      <td *ngIf="flight.Valuta == 'USD'">{{ flight.UkupnaCijena | currency }}</td>
+      <td *ngIf="flight.Valuta == 'EUR'">{{ flight.UkupnaCijena | currency:'EUR' }}</td>
+    </tr>
+  </tbody>
+</table>
