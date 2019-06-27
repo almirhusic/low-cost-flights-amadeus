@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
 import { DatePipe } from '@angular/common';
 import { Model } from './model';
+import * as funcs from "./functions";
 
 @Component({
   selector: 'app-low-cost-flight',
@@ -11,6 +12,7 @@ import { Model } from './model';
 export class LowCostFlightComponent implements OnInit {
   public flights: Model.FlightOffers[];
   public flightsModel: FlightOffersModel[];
+  public flightsModel2: FlightOffersModel2[];
   public accessToken: string;
   public loading: boolean = false;
   public origin: string = "";
@@ -23,7 +25,8 @@ export class LowCostFlightComponent implements OnInit {
   public passengers = [1, 2, 3, 4, 5, 6, 7, 8, 9];
   public currency = ["EUR", "USD", "HRK", "BAM"];
   public zaPrikaz = ["5", "10", "15", "20", "25", "30", "35", "40", "45", "50"];
-  public zaPrikazSelected = "10";
+  public zaPrikazSelected = "5";
+  public returnFlight: boolean = false;
 
   constructor(private http: HttpClient, private datePipe: DatePipe) {
     this.baseUrl = "https://test.api.amadeus.com/v1/shopping/flight-offers";
@@ -33,23 +36,20 @@ export class LowCostFlightComponent implements OnInit {
     this.getToken();
   }
 
-  selectPassengers(value) {
-    this.selectedPassengers = value;
+  selectPassengers(value){
+    funcs.selectPassengers(value);
   }
-  selectZaPrikaz(value) {
-    this.zaPrikazSelected = value;
+
+  selectZaPrikaz(value){
+    funcs.selectZaPrikaz(value);
   }
-  
-  selectCurrency(value) {
-    this.selectedCurrency = value;
+
+  selectCurrency(value){
+    funcs.selectCurrency(value);
   }
 
   formatDate(date) {
-    var y = date.getFullYear();
-    var m = date.getMonth() + 1 < 10 ? "0" + parseInt(date.getMonth() + 1) : (date.getMonth() + 1);
-    var d = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
-
-    return y + "-" + m + "-" + d;
+    return funcs.formatDate(date);
   }
 
   getToken() {
@@ -77,28 +77,6 @@ export class LowCostFlightComponent implements OnInit {
       this.accessToken = res["access_token"];
     }, error => console.error(error));
   }
-
-  getBrojPresijedanja(service: any) {
-    return service.segments.length;
-  }
-  
-  getBrojPutnika(segment: any[]){
-    let p = 0;
-
-    if(segment[0].pricingDetailPerAdult != undefined){
-      p = segment[0].pricingDetailPerAdult.availability;
-    }else if(segment[0].pricingDetailPerChild != undefined){
-      p = segment[0].pricingDetailPerChild.availability;
-    }else if(segment[0].pricingDetailPerSenior != undefined){
-      p = segment[0].pricingDetailPerSenior.availability;
-    }else if(segment[0].pricingDetailPerInfant != undefined){
-      p = segment[0].pricingDetailPerInfant.availability;
-    }else{
-      p = 0;
-    }
-
-    return p;
-}
 
   getAerodromName(segments: any[], at: string, location: any) {
     let loc: any;
@@ -132,9 +110,9 @@ export class LowCostFlightComponent implements OnInit {
       d.offerItems.forEach(item => {
         item.services.forEach(service => {
           if(item.services.indexOf(service) < 1) {
-            temp.BrojPresjedanjaPovratak = item.services.length > 1 ? this.getBrojPresijedanja(item.services[1]) : 0;
-            temp.BrojPresjedanjaOdlazak = this.getBrojPresijedanja(item.services[0]);
-            temp.BrojPutnika = this.getBrojPutnika(service.segments);
+            temp.BrojPresjedanjaPovratak = item.services.length > 1 ? funcs.getBrojPresijedanja(item.services[1]) : 0;
+            temp.BrojPresjedanjaOdlazak = funcs.getBrojPresijedanja(item.services[0]);
+            temp.BrojPutnika = funcs.getBrojPutnika(service.segments);
             temp.UkupnaCijena = item.price.total;
             temp.Valuta = result.meta.currency;
             temp.PolazniAerodrom = this.getAerodromName(service.segments, "departure", result.dictionaries.locations);
@@ -151,6 +129,45 @@ export class LowCostFlightComponent implements OnInit {
     return data;
   }
 
+  getData2(result) {
+    let data: FlightOffersModel2[] = [];
+    
+    result.data.forEach(d => {
+      let temp: FlightOffersModel2 = {} as any;
+      
+      d.offerItems.forEach(item => {
+        item.services.forEach(service => {
+          if(item.services.indexOf(service) < 1) {
+            temp.PresjedanjaPovratak = item.services.length > 1 ? funcs.getBrojPresijedanja(item.services[1]) : 0;
+            temp.PresjedanjaOdlazak = funcs.getBrojPresijedanja(item.services[0]);
+            temp.SlobodnaMjesta = funcs.getBrojPutnika(service.segments);
+            temp.Cijena = item.price.total;
+            temp.Valuta = result.meta.currency;
+            temp.PolazniAerodrom = this.getAerodromName(service.segments, "departure", result.dictionaries.locations);
+            temp.OdredisniAerodrom = this.getAerodromName(service.segments, "arrival", result.dictionaries.locations);
+            temp.PolazniAerodromIataCode = temp.PolazniAerodrom.substring(temp.PolazniAerodrom.indexOf('(')+1, temp.PolazniAerodrom.length-1);
+            temp.OdredisniAerodromIataCode = temp.OdredisniAerodrom.substring(temp.OdredisniAerodrom.indexOf('(')+1, temp.OdredisniAerodrom.length-1);
+            temp.DatumPolaska = this.datePipe.transform(this.getDatumLeta(service.segments, "departure"), "dd-MM-yyyy hh:mm");
+            temp.DatumPovratka = this.datePipe.transform(this.getDatumLeta(service.segments, "arrival"), "dd-MM-yyyy hh:mm");
+            temp.Klasa = funcs.getTravelClass(service.segments[0]);
+            temp.NazivAviona = funcs.getCarrierName(service.segments[0], result.dictionaries.carriers);
+            temp.BrojZaustavljanja = funcs.getBrojZaustavljanja(service.segments[0]);
+            temp.TrajanjeZaustavljanja = funcs.getTrajanjeZaustavljanja(service.segments[0]);
+            temp.ZaustavniAerodromIataCode = funcs.getZaustavniAerodromCode(service.segments[0]);
+            temp.VrijemePolaska = this.datePipe.transform(this.getDatumLeta(service.segments, "departure"), "hh:mm");
+            temp.VrijemePovratka = this.datePipe.transform(this.getDatumLeta(service.segments, "arrival"), "hh:mm");
+            temp.Return = this.returnFlight;
+            temp.TrajanjeLeta = '1h 53m';
+
+            data = [...data, temp];
+          }
+          console.log(temp);
+        });
+        
+      });
+    });
+    return data;
+  }
 
   fetchData() {
     let checkToken: string;
@@ -177,42 +194,37 @@ export class LowCostFlightComponent implements OnInit {
     var maxQueryParam = `&max=${this.zaPrikazSelected}`;
     if (departureDateFormated === returnDateFormated) {
       returnDateQueryParam = "";
+      this.returnFlight = false;
     }
 
     if (depDateParsed > retDateParsed) {
       alert("Datum povratka ne može biti manji od datuma polaska");
       return;
+    }else{
+      this.returnFlight = true;
     }
 
     this.loading = true;
     
     var url = originQueryParam + destinationQueryParam + departureDateQueryParam + returnDateQueryParam + passengersQueryParam + currencyQueryParam + maxQueryParam;
-    var ls = localStorage.getItem(url);
-    
-    if (ls != null) {
-      this.flights = JSON.parse(ls);
+
+    if (this.origin == "" || this.destination == "") {
+      alert("Polja označena * su obavezna.");
       this.loading = false;
     } else {
-      if (this.origin == "" || this.destination == "") {
-        alert("Polja označena * su obavezna.");
+
+      let httpHeaders = new HttpHeaders({
+        'Content-Type': 'application/vnd.amadeus+json; charset=utf-8',
+        'Accept': 'application/vnd.amadeus+json',
+        'Authorization': `Bearer ${this.accessToken}`
+      });
+
+      this.http.get<Model.FlightOffers[]>(this.baseUrl + url, { headers: httpHeaders }).subscribe(result => {
+        this.flights = result;
+        this.flightsModel = this.getData(this.flights);
+        this.flightsModel2 = this.getData2(this.flights);
         this.loading = false;
-      } else {
-
-        let httpHeaders = new HttpHeaders({
-          'Content-Type': 'application/vnd.amadeus+json; charset=utf-8',
-          'Accept': 'application/vnd.amadeus+json',
-          'Authorization': `Bearer ${this.accessToken}`
-        });
-
-        this.http.get<Model.FlightOffers[]>(this.baseUrl + url, { headers: httpHeaders }).subscribe(result => {
-          this.flights = result;
-          this.flightsModel = this.getData(this.flights);
-          this.loading = false;
-          if (this.flights.length > 0) {
-            localStorage.setItem(url, JSON.stringify(this.flights));
-          }
-        }, error => console.error(error));
-      }    
+      }, error => console.error(error));
     }
   }
 }
@@ -227,4 +239,27 @@ interface FlightOffersModel {
   BrojPutnika: number;
   Valuta: string;
   UkupnaCijena: string;
+}
+
+interface FlightOffersModel2 {
+  PolazniAerodrom: string;
+  PolazniAerodromIataCode: string;
+  OdredisniAerodrom: string;
+  OdredisniAerodromIataCode: string;
+  DatumPolaska: string;
+  DatumPovratka: string;
+  VrijemePolaska: string;
+  VrijemePovratka: string;
+  Return: boolean;
+  NazivAviona: string;
+  TrajanjeLeta: string;
+  Cijena: string;
+  Klasa: string;
+  Valuta: string;
+  SlobodnaMjesta: number;
+  PresjedanjaOdlazak: string;
+  PresjedanjaPovratak: string;
+  BrojZaustavljanja: number;
+  TrajanjeZaustavljanja: string;
+  ZaustavniAerodromIataCode: string;
 }

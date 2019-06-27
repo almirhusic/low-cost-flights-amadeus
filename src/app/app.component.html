@@ -4,21 +4,21 @@
   </button>
 
   <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
-    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+    <ul class="nav nav-tabs">
       <li class="nav-item">
-        <a class="nav-link" routerLink="/">Low cost flights <span class="sr-only">(current)</span></a>
+        <a class="nav-link active" (click)="clicked($event)" routerLink="/">Low cost flights <span class="sr-only">(current)</span></a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" routerLink="/cheapest-date">Cheapest date search</a>
+        <a class="nav-link" (click)="clicked($event)" routerLink="/cheapest-date">Cheapest date search</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" routerLink="/inspiration-search">Inspiration search</a>
+        <a class="nav-link" (click)="clicked($event)" routerLink="/inspiration-search">Inspiration search</a>
       </li>
     </ul>
   </div>
 </nav>
 
-<div class="container">
+<div class="container-fluid">
 
   <router-outlet></router-outlet>
 

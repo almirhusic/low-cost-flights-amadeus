@@ -59,7 +59,98 @@
 
 <hr>
 
-<table class='table table-bordered' *ngIf="flightsModel">
+<div *ngIf="flight.Return" class="flights" *ngFor="let flight of flightsModel2">
+  <div class="plane">
+    <img src="../../assets/img/airplane-icon.png" alt="">
+    <div class="flight-route">
+      <span class="origin">{{ flight.PolazniAerodrom }}</span>
+      <span>to</span>
+      <span class="destination">{{ flight.OdredisniAerodrom }}</span>
+    </div>
+  </div>
+  <div class="row" style="height: 150px;position: relative;padding: 10px;margin-top: 20px;">
+    <div class="col-sm-12 col-lg-9">
+      <div class="row">
+        <div class="col-sm-12 col-lg-4">
+          <div class="flight-time">
+            <span class="time">{{ flight.VrijemePolaska }} - {{ flight.VrijemePovratka }}</span>
+            <br>
+            <span class="carrierName">{{ flight.NazivAviona }}</span>
+          </div>
+        </div>
+        <div class="col-sm-12 col-lg-4">
+          <div class="flight-way">
+            <span class="stops">{{ flight.BrojZaustavljanja }}</span>
+            <br>
+            <span class="stop-iataCode">{{ flight.ZaustavniAerodromIataCode }}</span>
+          </div>
+        </div>
+        <div class="col-sm-12 col-lg-4">
+          <div class="flight-duration">
+            <span class="duration">{{ flight.TrajanjeLeta }}</span>
+            <br>
+            <span class="iata-codes">{{ flight.PolazniAerodromIataCode }} - {{ flight.OdredisniAerodromIataCode }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-12 col-lg-3">
+      <div class="price-availability">
+        <div class="inner">
+            <div class="price">
+              <span>from <span class="currency">{{ flight.Cijena | currency: 'EUR' }}</span></span>
+            </div>
+            <div class="availability">
+              <span class="availability-text">Available seats: </span><span class="seats">{{ flight.SlobodnaMjesta }}</span>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row" style="height: 150px;position: relative;padding: 10px;margin-top: 20px;">
+      <div class="col-sm-12 col-lg-9">
+        <div class="row">
+          <div class="col-sm-12 col-lg-4">
+            <div class="flight-time">
+              <span class="time">{{ flight.VrijemePolaska }} - {{ flight.VrijemePovratka }}</span>
+              <br>
+              <span class="carrierName">{{ flight.NazivAviona }}</span>
+            </div>
+          </div>
+          <div class="col-sm-12 col-lg-4">
+            <div class="flight-way">
+              <span class="stops">{{ flight.BrojZaustavljanja }}</span>
+              <br>
+              <span class="stop-iataCode">{{ flight.ZaustavniAerodromIataCode }}</span>
+            </div>
+          </div>
+          <div class="col-sm-12 col-lg-4">
+            <div class="flight-duration">
+              <span class="duration">{{ flight.TrajanjeLeta }}</span>
+              <br>
+              <span class="iata-codes">{{ flight.PolazniAerodromIataCode }} - {{ flight.OdredisniAerodromIataCode }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-12 col-lg-3">
+        <div class="price-availability">
+          <div class="inner">
+              <div class="price">
+                <span>from <span class="currency">{{ flight.Cijena | currency: 'EUR' }}</span></span>
+              </div>
+              <div class="availability">
+                <span class="availability-text">Available seats: </span><span class="seats">{{ flight.SlobodnaMjesta }}</span>
+              </div>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
+
+<!-- 
+<table class='table table-bordered' *ngIf="flightsModel2">
   <thead>
     <tr>
       <th>Polazište</th>
@@ -73,21 +164,23 @@
     </tr>
   </thead>
   <tbody>
-    <tr *ngIf="flightsModel.length == 0"><td colspan="9" class="text-center lead">Nema pronađenih letova</td></tr>
+    <tr *ngIf="flightsModel2.length == 0"><td colspan="9" class="text-center lead">Nema pronađenih letova</td></tr>
 
-    <tr *ngFor="let flight of flightsModel">
+    <tr *ngFor="let flight of flightsModel2">
       <td>{{ flight.PolazniAerodrom }}</td>
       <td>{{ flight.OdredisniAerodrom }}</td>
       <td>{{ flight.DatumPolaska }}</td>
       <td>{{ flight.DatumPovratka }}</td>
       <td *ngIf="flight.BrojPresjedanjaOdlazak != 0">{{ flight.BrojPresjedanjaOdlazak }}</td>
       <td *ngIf="flight.BrojPresjedanjaOdlazak == 0">Direct</td>
-      <td>{{ flight.BrojPresjedanjaPovratak }}</td>
+      <td *ngIf="flight.BrojPresjedanjaPovratak != 0">{{ flight.BrojPresjedanjaPovratak }}</td>
+      <td *ngIf="flight.BrojPresjedanjaPovratak == 0">One way</td>
       <td>{{ flight.BrojPutnika }}</td>
       <td>{{ flight.Valuta }}</td>
       <td *ngIf="flight.Valuta == 'HRK'">{{ flight.UkupnaCijena }}</td>
       <td *ngIf="flight.Valuta == 'USD'">{{ flight.UkupnaCijena | currency }}</td>
       <td *ngIf="flight.Valuta == 'EUR'">{{ flight.UkupnaCijena | currency:'EUR' }}</td>
+      <td *ngIf="flight.Valuta == 'BAM'">{{ flight.UkupnaCijena | currency:'BAM' }}</td>
     </tr>
   </tbody>
-</table>
+</table> -->

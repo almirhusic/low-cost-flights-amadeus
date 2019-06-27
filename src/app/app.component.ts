@@ -7,4 +7,14 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'Flights';
+
+  clicked(e){
+    let elements = Array.from(document.getElementsByClassName('nav-link'));
+
+    elements.forEach(el => {
+      el.classList.remove('active')
+    });
+
+    e.target.classList.toggle('active');
+  }
 }
