@@ -101,34 +101,6 @@ export class LowCostFlightComponent implements OnInit {
     }
   }
 
-  // getData(result) {
-  //   let data: FlightOffersModel[] = [];
-    
-  //   result.data.forEach(d => {
-  //     let temp: FlightOffersModel = {} as any;
-      
-  //     d.offerItems.forEach(item => {
-  //       item.services.forEach(service => {
-  //         if(item.services.indexOf(service) < 1) {
-  //           temp.BrojPresjedanjaPovratak = item.services.length > 1 ? funcs.getBrojPresijedanja(item.services[1]) : 0;
-  //           temp.BrojPresjedanjaOdlazak = funcs.getBrojPresijedanja(item.services[0]);
-  //           temp.BrojPutnika = funcs.getBrojPutnika(service.segments);
-  //           temp.UkupnaCijena = item.price.total;
-  //           temp.Valuta = result.meta.currency;
-  //           temp.PolazniAerodrom = this.getAerodromName(service.segments, "departure", result.dictionaries.locations);
-  //           temp.OdredisniAerodrom = this.getAerodromName(service.segments, "arrival", result.dictionaries.locations);
-  //           temp.DatumPolaska = this.datePipe.transform(this.getDatumLeta(service.segments, "departure"), "dd-MM-yyyy hh:mm");
-  //           temp.DatumPovratka = this.datePipe.transform(this.getDatumLeta(service.segments, "arrival"), "dd-MM-yyyy hh:mm");
-
-  //           data = [...data, temp];
-  //         }
-  //       });
-        
-  //     });
-  //   });
-  //   return data;
-  // }
-
   getData2(result) {
     let data: FlightOffersModel2[] = [];
     
@@ -229,7 +201,6 @@ export class LowCostFlightComponent implements OnInit {
 
       this.http.get<Model.FlightOffers[]>(this.baseUrl + url, { headers: httpHeaders }).subscribe(result => {
         this.flights = result;
-        //this.flightsModel = this.getData(this.flights);
         this.flightsModel2 = this.getData2(this.flights);
         this.loading = false;
       }, error => console.error(error));
