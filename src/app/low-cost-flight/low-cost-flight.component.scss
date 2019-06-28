@@ -1,9 +1,15 @@
 .text-center {
   text-align: center;
 }
-.frmGrCustom {
-  text-align: right;
-  margin-top: 50px;
+.form-group {
+  .col-lg-3 &{
+    width: 100%;
+  }
+  margin-bottom: 0;
+  margin-right: 5px;
+}
+.btn.btn-primary {
+  margin-top: 2rem;
 }
 .field-required {
   color: red;
@@ -50,51 +56,65 @@
 }
 .flights {
   margin: 0 auto;
-  width: 70%;
+  width: 90%;
   padding: 20px;
-  margin-top: 35px;
-  margin-bottom: 35px;
+  margin: 35px auto;
   border: 2px solid #00d1e0;
   background-color: #fafafc;
   position: relative;
 
-  .flight-time {
-
-    .time {
-      font-size: 24px;
-      font-weight: 700;
+  .flight- {
+    &data {
+      position: relative;
+      padding: 10px;
+      margin-top: 10px;
+      
+      &-no-return {
+        width: 100%;
+        margin-top: 10px;
+      }
+      &-return {
+        width: 100%;
+        margin-top: 10px;
+      }      
     }
 
-    .carrierName {
+    &time {
+      .time {
+        font-size: 24px;
+        font-weight: 700;
+      }
+      .carrierName {
+        color: #51697a;
+        font-size: 14px;
+      }
+    }
+
+    &way {
       color: #51697a;
-      font-size: 14px;
-    }
-  }
-
-  .flight-way {
-    color: #51697a;
-    font-size: 16px;
-  }
-
-  .flight-duration {
-    color: #51697a;
-    font-size: 16px;
-  }
-
-  .flight-route {
-    display: inline-block;
-    margin-left: 20px;
-    color: white;
-
-    .origin {
-      margin-right: 10px;
-      font-size: 18px;
+      font-size: 16px;
     }
 
-    .destination {
-      margin-left: 10px;
-      margin-right: 10px;
-      font-size: 18px;
+    &duration {
+      color: #51697a;
+      font-size: 16px;
+    }
+
+    &route {
+      display: inline-block;
+      margin-left: 20px;
+      color: white;
+  
+      .origin {
+        margin-right: 10px;
+        font-size: 18px;
+      }
+  
+      .destination {
+        margin-left: 10px;
+        margin-right: 10px;
+        font-size: 18px;
+      }
     }
   }
 

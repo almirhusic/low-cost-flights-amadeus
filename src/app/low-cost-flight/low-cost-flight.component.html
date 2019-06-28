@@ -1,186 +1,136 @@
 <div *ngIf="loading" class="loading"><em>Loading data</em></div>
 
-<form class="form" (ngSubmit)="fetchData()">
-  <div class="form-row">
-    <div class="col">
-      <div class="form-group">
-        <label for="origin">Polazni aerodrom <span class="field-required">*</span></label>
-        <input type="text" name="origin" [(ngModel)]="origin" placeholder="IATA šifra" class="form-control">
-      </div>
-
-      <div class="form-group">
-        <label for="destination">Odredišni aerodrom <span class="field-required">*</span></label>
-        <input type="text" name="destination" [(ngModel)]="destination" placeholder="IATA šifra" class="form-control">
-      </div>
-    </div>
-
-    <div class="col">
-      <div class="form-group">
-        <label for="departureDate">Datum polaska <span class="field-required">*</span></label>
-        <ng-datepicker name="departureDate" [(ngModel)]="departureDate" [ngModelOptions]="{standalone: true}"></ng-datepicker>
-      </div>
-
-      <div class="form-group">
-        <label for="returnDate">Datum povratka</label>
-        <ng-datepicker name="returnDate" [(ngModel)]="returnDate" [ngModelOptions]="{standalone: true}"></ng-datepicker>
-      </div>
-    </div>
-
-    <div class="col">
-      <div class="form-group">
-        <label for="passengers">Broj putnika</label>
-        <select name="passengers" [(ngModel)]="selectedPassengers" (change)="selectPassengers($event.target.value)" class="form-control">
-          <option *ngFor="let pass of passengers" value="{{pass}}">{{pass}}</option>
-        </select>
+<div class="row">
+  <div [ngClass]="{'col-sm-12 col-lg-9': flightsModel2 != undefined}" [ngClass]="{'col-sm-12 col-lg-12': flightsModel2 == undefined}">
+    <div class="flights" *ngFor="let flight of flightsModel2">
+      <div class="plane">
+        <img src="../../assets/img/airplane-icon.png" alt="">
+        <div class="flight-route">
+          <span class="origin">{{ flight.PolazniAerodrom }}</span>
+          <span>to</span>
+          <span class="destination">{{ flight.OdredisniAerodrom }}</span>
+        </div>
       </div>
     
-      <div class="form-group">
-        <label for="valuta">Valuta</label>
-        <select name="valuta" [(ngModel)]="selectedCurrency" (change)="selectCurrency($event.target.value)" class="form-control">
-          <option *ngFor="let curr of currency" value="{{curr}}">{{curr}}</option>
-        </select>
-      </div>
-    </div>    
-
-    <div class="col">
-      <div class="form-group">
-        <label for="zaPrikaz">Broj zapisa za prikaz</label>
-        <select name="zaPrikaz" [(ngModel)]="zaPrikazSelected" (change)="selectZaPrikaz($event.target.value)" class="form-control">
-          <option *ngFor="let pr of zaPrikaz" value="{{pr}}">{{pr}}</option>
-        </select>
-      </div>
-
-      <div class="form-group frmGrCustom">
-        <input type="submit" value="Submit" class="btn btn-primary" />
-      </div>      
-    </div>
-  </div>  
-</form>
-
-<hr>
-
-<div *ngIf="flight.Return" class="flights" *ngFor="let flight of flightsModel2">
-  <div class="plane">
-    <img src="../../assets/img/airplane-icon.png" alt="">
-    <div class="flight-route">
-      <span class="origin">{{ flight.PolazniAerodrom }}</span>
-      <span>to</span>
-      <span class="destination">{{ flight.OdredisniAerodrom }}</span>
-    </div>
-  </div>
-  <div class="row" style="height: 150px;position: relative;padding: 10px;margin-top: 20px;">
-    <div class="col-sm-12 col-lg-9">
       <div class="row">
-        <div class="col-sm-12 col-lg-4">
-          <div class="flight-time">
-            <span class="time">{{ flight.VrijemePolaska }} - {{ flight.VrijemePovratka }}</span>
-            <br>
-            <span class="carrierName">{{ flight.NazivAviona }}</span>
-          </div>
+        <div class="col-sm-12 col-lg-9">
+              <div class="flight-data">
+                <div class="flight-data-no-return">
+                  <div class="row">
+                    <div class="col-sm-12 col-lg-5">
+                      <div class="flight-time">
+                        <span class="time">{{ flight.VrijemePolaska }}</span>
+                        <br>
+                        <span class="carrierName">{{ flight.NazivAvionaPolazak }}</span>
+                      </div>
+                    </div>
+                    <div class="col-sm-12 col-lg-3">
+                      <div class="flight-way">
+                          <span class="stops" *ngIf="flight.PresjedanjaOdlazak == 0">Direct</span>
+                          <span class="stops" *ngIf="flight.PresjedanjaOdlazak == 1">{{ flight.PresjedanjaOdlazak }} stop</span>
+                          <span class="stops" *ngIf="flight.PresjedanjaOdlazak > 1">{{ flight.PresjedanjaOdlazak }} stops</span>
+                        <br>
+                        <span class="stop-iataCode" *ngIf="flight.PresjedanjaOdlazak != 0">{{ flight.PresjedanjaOdlazakIataCodes }}</span>
+                      </div>
+                    </div>
+                    <div class="col-sm-12 col-lg-4">
+                      <div class="flight-duration">
+                        <span class="duration">{{ flight.TrajanjeLeta }}</span>
+                        <br>
+                        <span class="iata-codes">{{ flight.PolazniAerodromIataCode }} - {{ flight.OdredisniAerodromIataCode }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+        
+                <div class="flight-data-return" *ngIf="flight.Return">
+                  <div class="row" >
+                    <div class="col-sm-12 col-lg-5">
+                      <div class="flight-time">
+                        <span class="time">{{ flight.VrijemePovratka }}</span>
+                        <br>
+                        <span class="carrierName">{{ flight.NazivAvionaPovratak }}</span>
+                      </div>
+                    </div>
+                    <div class="col-sm-12 col-lg-3">
+                      <div class="flight-way">
+                          <span class="stops" *ngIf="flight.PresjedanjaPovratak == 0">Direct</span>
+                          <span class="stops" *ngIf="flight.PresjedanjaPovratak == 1">{{ flight.PresjedanjaPovratak }} stop</span>
+                          <span class="stops" *ngIf="flight.PresjedanjaPovratak > 1">{{ flight.PresjedanjaPovratak }} stops</span>
+                        <br>
+                        <span class="stop-iataCode" *ngIf="flight.PresjedanjaOdlazak != 0">{{ flight.PresjedanjaPovratakIataCodes }}</span>
+                      </div>
+                    </div>
+                    <div class="col-sm-12 col-lg-4">
+                      <div class="flight-duration">
+                        <span class="duration">{{ flight.TrajanjeLeta }}</span>
+                        <br>
+                        <span class="iata-codes">{{ flight.OdredisniAerodromIataCode }} - {{ flight.PolazniAerodromIataCode }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
         </div>
-        <div class="col-sm-12 col-lg-4">
-          <div class="flight-way">
-            <span class="stops">{{ flight.BrojZaustavljanja }}</span>
-            <br>
-            <span class="stop-iataCode">{{ flight.ZaustavniAerodromIataCode }}</span>
-          </div>
-        </div>
-        <div class="col-sm-12 col-lg-4">
-          <div class="flight-duration">
-            <span class="duration">{{ flight.TrajanjeLeta }}</span>
-            <br>
-            <span class="iata-codes">{{ flight.PolazniAerodromIataCode }} - {{ flight.OdredisniAerodromIataCode }}</span>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="col-sm-12 col-lg-3">
-      <div class="price-availability">
-        <div class="inner">
-            <div class="price">
-              <span>from <span class="currency">{{ flight.Cijena | currency: 'EUR' }}</span></span>
+        <div class="col-sm-12 col-lg-3">
+          <div class="price-availability">
+            <div class="inner">
+                <div class="price">
+                  <span>from <span class="currency">{{ flight.Cijena | currency: 'EUR' }}</span></span>
+                </div>
+                <div class="availability">
+                  <span class="availability-text">Available seats: </span><span class="seats">{{ flight.SlobodnaMjesta }}</span>
+                </div>
             </div>
-            <div class="availability">
-              <span class="availability-text">Available seats: </span><span class="seats">{{ flight.SlobodnaMjesta }}</span>
-            </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
+  <div [ngClass]="{'col-sm-12 col-lg-3': flightsModel2 != undefined, 'col-sm-12 col-lg-12': flightsModel2 == undefined}">
+    <form class="form" (ngSubmit)="fetchData()">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="origin">Polazni aerodrom <span class="field-required">*</span></label>
+          <input type="text" name="origin" [(ngModel)]="origin" placeholder="IATA šifra" class="form-control">
+        </div>
+  
+        <div class="form-group">
+          <label for="destination">Odredišni aerodrom <span class="field-required">*</span></label>
+          <input type="text" name="destination" [(ngModel)]="destination" placeholder="IATA šifra" class="form-control">
+        </div>
 
-  <div class="row" style="height: 150px;position: relative;padding: 10px;margin-top: 20px;">
-      <div class="col-sm-12 col-lg-9">
-        <div class="row">
-          <div class="col-sm-12 col-lg-4">
-            <div class="flight-time">
-              <span class="time">{{ flight.VrijemePolaska }} - {{ flight.VrijemePovratka }}</span>
-              <br>
-              <span class="carrierName">{{ flight.NazivAviona }}</span>
-            </div>
-          </div>
-          <div class="col-sm-12 col-lg-4">
-            <div class="flight-way">
-              <span class="stops">{{ flight.BrojZaustavljanja }}</span>
-              <br>
-              <span class="stop-iataCode">{{ flight.ZaustavniAerodromIataCode }}</span>
-            </div>
-          </div>
-          <div class="col-sm-12 col-lg-4">
-            <div class="flight-duration">
-              <span class="duration">{{ flight.TrajanjeLeta }}</span>
-              <br>
-              <span class="iata-codes">{{ flight.PolazniAerodromIataCode }} - {{ flight.OdredisniAerodromIataCode }}</span>
-            </div>
-          </div>
+        <div class="form-group">
+          <label for="departureDate">Datum polaska <span class="field-required">*</span></label>
+          <ng-datepicker name="departureDate" [options]="options" [(ngModel)]="departureDate" [ngModelOptions]="{standalone: true}"></ng-datepicker>
         </div>
-      </div>
-      <div class="col-sm-12 col-lg-3">
-        <div class="price-availability">
-          <div class="inner">
-              <div class="price">
-                <span>from <span class="currency">{{ flight.Cijena | currency: 'EUR' }}</span></span>
-              </div>
-              <div class="availability">
-                <span class="availability-text">Available seats: </span><span class="seats">{{ flight.SlobodnaMjesta }}</span>
-              </div>
-          </div>
+  
+        <div class="form-group">
+          <label for="returnDate">Datum povratka</label>
+          <ng-datepicker name="returnDate" [options]="opts" [(ngModel)]="returnDate" [ngModelOptions]="{standalone: true}"></ng-datepicker>
         </div>
-      </div>
-    </div>
+        <div class="form-group">
+          <label for="passengers">Broj putnika</label>
+          <select name="passengers" [(ngModel)]="selectedPassengers" (change)="selectPassengers($event.target.value)" class="form-control">
+            <option *ngFor="let pass of passengers" value="{{pass}}">{{pass}}</option>
+          </select>
+        </div>
+      
+        <div class="form-group">
+          <label for="valuta">Valuta</label>
+          <select name="valuta" [(ngModel)]="selectedCurrency" (change)="selectCurrency($event.target.value)" class="form-control">
+            <option *ngFor="let curr of currency" value="{{curr}}">{{curr}}</option>
+          </select>
+        </div>   
+        <div class="form-group">
+          <label for="zaPrikaz">Broj zapisa za prikaz</label>
+          <select name="zaPrikaz" [(ngModel)]="zaPrikazSelected" (change)="selectZaPrikaz($event.target.value)" class="form-control">
+            <option *ngFor="let pr of zaPrikaz" value="{{pr}}">{{pr}}</option>
+          </select>
+        </div>
+  
+        <input type="submit" value="Submit" class="btn btn-primary" />   
+      </div>  
+    </form>
+  </div>
 </div>
-
-<!-- 
-<table class='table table-bordered' *ngIf="flightsModel2">
-  <thead>
-    <tr>
-      <th>Polazište</th>
-      <th>Destinacija</th>
-      <th>Polazak</th>
-      <th>Povratak</th>
-      <th colspan="2">Presjedanja polazak/povratak</th>
-      <th>Slobodnih mjesta</th>
-      <th>Valuta</th>
-      <th>Cijena</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngIf="flightsModel2.length == 0"><td colspan="9" class="text-center lead">Nema pronađenih letova</td></tr>
-
-    <tr *ngFor="let flight of flightsModel2">
-      <td>{{ flight.PolazniAerodrom }}</td>
-      <td>{{ flight.OdredisniAerodrom }}</td>
-      <td>{{ flight.DatumPolaska }}</td>
-      <td>{{ flight.DatumPovratka }}</td>
-      <td *ngIf="flight.BrojPresjedanjaOdlazak != 0">{{ flight.BrojPresjedanjaOdlazak }}</td>
-      <td *ngIf="flight.BrojPresjedanjaOdlazak == 0">Direct</td>
-      <td *ngIf="flight.BrojPresjedanjaPovratak != 0">{{ flight.BrojPresjedanjaPovratak }}</td>
-      <td *ngIf="flight.BrojPresjedanjaPovratak == 0">One way</td>
-      <td>{{ flight.BrojPutnika }}</td>
-      <td>{{ flight.Valuta }}</td>
-      <td *ngIf="flight.Valuta == 'HRK'">{{ flight.UkupnaCijena }}</td>
-      <td *ngIf="flight.Valuta == 'USD'">{{ flight.UkupnaCijena | currency }}</td>
-      <td *ngIf="flight.Valuta == 'EUR'">{{ flight.UkupnaCijena | currency:'EUR' }}</td>
-      <td *ngIf="flight.Valuta == 'BAM'">{{ flight.UkupnaCijena | currency:'BAM' }}</td>
-    </tr>
-  </tbody>
-</table> -->

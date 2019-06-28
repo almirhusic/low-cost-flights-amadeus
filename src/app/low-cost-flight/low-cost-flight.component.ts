@@ -101,33 +101,33 @@ export class LowCostFlightComponent implements OnInit {
     }
   }
 
-  getData(result) {
-    let data: FlightOffersModel[] = [];
+  // getData(result) {
+  //   let data: FlightOffersModel[] = [];
     
-    result.data.forEach(d => {
-      let temp: FlightOffersModel = {} as any;
+  //   result.data.forEach(d => {
+  //     let temp: FlightOffersModel = {} as any;
       
-      d.offerItems.forEach(item => {
-        item.services.forEach(service => {
-          if(item.services.indexOf(service) < 1) {
-            temp.BrojPresjedanjaPovratak = item.services.length > 1 ? funcs.getBrojPresijedanja(item.services[1]) : 0;
-            temp.BrojPresjedanjaOdlazak = funcs.getBrojPresijedanja(item.services[0]);
-            temp.BrojPutnika = funcs.getBrojPutnika(service.segments);
-            temp.UkupnaCijena = item.price.total;
-            temp.Valuta = result.meta.currency;
-            temp.PolazniAerodrom = this.getAerodromName(service.segments, "departure", result.dictionaries.locations);
-            temp.OdredisniAerodrom = this.getAerodromName(service.segments, "arrival", result.dictionaries.locations);
-            temp.DatumPolaska = this.datePipe.transform(this.getDatumLeta(service.segments, "departure"), "dd-MM-yyyy hh:mm");
-            temp.DatumPovratka = this.datePipe.transform(this.getDatumLeta(service.segments, "arrival"), "dd-MM-yyyy hh:mm");
+  //     d.offerItems.forEach(item => {
+  //       item.services.forEach(service => {
+  //         if(item.services.indexOf(service) < 1) {
+  //           temp.BrojPresjedanjaPovratak = item.services.length > 1 ? funcs.getBrojPresijedanja(item.services[1]) : 0;
+  //           temp.BrojPresjedanjaOdlazak = funcs.getBrojPresijedanja(item.services[0]);
+  //           temp.BrojPutnika = funcs.getBrojPutnika(service.segments);
+  //           temp.UkupnaCijena = item.price.total;
+  //           temp.Valuta = result.meta.currency;
+  //           temp.PolazniAerodrom = this.getAerodromName(service.segments, "departure", result.dictionaries.locations);
+  //           temp.OdredisniAerodrom = this.getAerodromName(service.segments, "arrival", result.dictionaries.locations);
+  //           temp.DatumPolaska = this.datePipe.transform(this.getDatumLeta(service.segments, "departure"), "dd-MM-yyyy hh:mm");
+  //           temp.DatumPovratka = this.datePipe.transform(this.getDatumLeta(service.segments, "arrival"), "dd-MM-yyyy hh:mm");
 
-            data = [...data, temp];
-          }
-        });
+  //           data = [...data, temp];
+  //         }
+  //       });
         
-      });
-    });
-    return data;
-  }
+  //     });
+  //   });
+  //   return data;
+  // }
 
   getData2(result) {
     let data: FlightOffersModel2[] = [];
@@ -138,32 +138,39 @@ export class LowCostFlightComponent implements OnInit {
       d.offerItems.forEach(item => {
         item.services.forEach(service => {
           if(item.services.indexOf(service) < 1) {
-            temp.PresjedanjaPovratak = item.services.length > 1 ? funcs.getBrojPresijedanja(item.services[1]) : 0;
             temp.PresjedanjaOdlazak = funcs.getBrojPresijedanja(item.services[0]);
             temp.SlobodnaMjesta = funcs.getBrojPutnika(service.segments);
             temp.Cijena = item.price.total;
             temp.Valuta = result.meta.currency;
             temp.PolazniAerodrom = this.getAerodromName(service.segments, "departure", result.dictionaries.locations);
-            temp.OdredisniAerodrom = this.getAerodromName(service.segments, "arrival", result.dictionaries.locations);
             temp.PolazniAerodromIataCode = temp.PolazniAerodrom.substring(temp.PolazniAerodrom.indexOf('(')+1, temp.PolazniAerodrom.length-1);
-            temp.OdredisniAerodromIataCode = temp.OdredisniAerodrom.substring(temp.OdredisniAerodrom.indexOf('(')+1, temp.OdredisniAerodrom.length-1);
             temp.DatumPolaska = this.datePipe.transform(this.getDatumLeta(service.segments, "departure"), "dd-MM-yyyy hh:mm");
-            temp.DatumPovratka = this.datePipe.transform(this.getDatumLeta(service.segments, "arrival"), "dd-MM-yyyy hh:mm");
             temp.Klasa = funcs.getTravelClass(service.segments[0]);
-            temp.NazivAviona = funcs.getCarrierName(service.segments[0], result.dictionaries.carriers);
+            temp.NazivAvionaPolazak = funcs.getCarrierName(service.segments[0], result.dictionaries.carriers);
             temp.BrojZaustavljanja = funcs.getBrojZaustavljanja(service.segments[0]);
             temp.TrajanjeZaustavljanja = funcs.getTrajanjeZaustavljanja(service.segments[0]);
             temp.ZaustavniAerodromIataCode = funcs.getZaustavniAerodromCode(service.segments[0]);
             temp.VrijemePolaska = this.datePipe.transform(this.getDatumLeta(service.segments, "departure"), "hh:mm");
-            temp.VrijemePovratka = this.datePipe.transform(this.getDatumLeta(service.segments, "arrival"), "hh:mm");
+            temp.VrijemePolaska += " - " + this.datePipe.transform(this.getDatumLeta(service.segments, "arrival"), "hh:mm");
             temp.Return = this.returnFlight;
             temp.TrajanjeLeta = '1h 53m';
+            temp.PresjedanjaOdlazakIataCodes = funcs.getIataCodesPresjedanja(service.segments, this.origin, this.destination);
+            
+            if(item.services.length > 1) {
+              temp.PresjedanjaPovratak = item.services.length > 1 ? funcs.getBrojPresijedanja(item.services[1]) : 0;
+              temp.OdredisniAerodrom = this.getAerodromName(service.segments, "arrival", result.dictionaries.locations);
+              temp.OdredisniAerodromIataCode = temp.OdredisniAerodrom.substring(temp.OdredisniAerodrom.indexOf('(')+1, temp.OdredisniAerodrom.length-1);
+              temp.DatumPovratka = this.datePipe.transform(this.getDatumLeta(service.segments, "arrival"), "dd-MM-yyyy hh:mm");
+              temp.VrijemePovratka = this.datePipe.transform(this.getDatumLeta(item.services[1].segments, "departure"), "hh:mm");
+              temp.VrijemePovratka += " - " + this.datePipe.transform(this.getDatumLeta(item.services[1].segments, "arrival"), "hh:mm");
+              temp.PresjedanjaPovratakIataCodes = funcs.getIataCodesPresjedanja(item.services[1].segments, this.origin, this.destination);
+              temp.NazivAvionaPovratak = funcs.getCarrierName(item.services[1].segments[0], result.dictionaries.carriers);
+            }
 
             data = [...data, temp];
           }
           console.log(temp);
-        });
-        
+        });        
       });
     });
     return data;
@@ -194,13 +201,14 @@ export class LowCostFlightComponent implements OnInit {
     var maxQueryParam = `&max=${this.zaPrikazSelected}`;
     if (departureDateFormated === returnDateFormated) {
       returnDateQueryParam = "";
-      this.returnFlight = false;
     }
 
     if (depDateParsed > retDateParsed) {
       alert("Datum povratka ne može biti manji od datuma polaska");
       return;
-    }else{
+    }
+
+    if(returnDateQueryParam != "") {
       this.returnFlight = true;
     }
 
@@ -221,7 +229,7 @@ export class LowCostFlightComponent implements OnInit {
 
       this.http.get<Model.FlightOffers[]>(this.baseUrl + url, { headers: httpHeaders }).subscribe(result => {
         this.flights = result;
-        this.flightsModel = this.getData(this.flights);
+        //this.flightsModel = this.getData(this.flights);
         this.flightsModel2 = this.getData2(this.flights);
         this.loading = false;
       }, error => console.error(error));
@@ -244,22 +252,27 @@ interface FlightOffersModel {
 interface FlightOffersModel2 {
   PolazniAerodrom: string;
   PolazniAerodromIataCode: string;
-  OdredisniAerodrom: string;
-  OdredisniAerodromIataCode: string;
   DatumPolaska: string;
-  DatumPovratka: string;
   VrijemePolaska: string;
+  NazivAvionaPolazak: string; //Polazak
+  PresjedanjaOdlazak: number;
+  PresjedanjaOdlazakIataCodes: string;
+  BrojZaustavljanja: number; //Polazak
+  TrajanjeZaustavljanja: string; //Polazak
+  ZaustavniAerodromIataCode: string; //Polazak
+
+
+  OdredisniAerodrom: string;
+  OdredisniAerodromIataCode: string;  
+  DatumPovratka: string;
   VrijemePovratka: string;
+  NazivAvionaPovratak: string;
   Return: boolean;
-  NazivAviona: string;
   TrajanjeLeta: string;
   Cijena: string;
   Klasa: string;
   Valuta: string;
   SlobodnaMjesta: number;
-  PresjedanjaOdlazak: string;
-  PresjedanjaPovratak: string;
-  BrojZaustavljanja: number;
-  TrajanjeZaustavljanja: string;
-  ZaustavniAerodromIataCode: string;
+  PresjedanjaPovratak: number;
+  PresjedanjaPovratakIataCodes: string;
 }

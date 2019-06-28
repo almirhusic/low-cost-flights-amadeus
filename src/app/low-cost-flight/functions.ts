@@ -11,7 +11,7 @@ export function selectCurrency(value) {
     this.selectedCurrency = value;
 }
 export function getBrojPresijedanja(service: any) {
-    return service.segments.length;
+    return service.segments.length - 1;
 }
 export function formatDate(date) {
     var y = date.getFullYear();
@@ -75,4 +75,25 @@ export function getBrojZaustavljanja(segment: any) {
     return segment.flightSegment.stops.length;
   else
     return 0;
+}
+export function getIataCodesPresjedanja(segments: any[], o: string, d: string) {
+  let codes: string = "";
+  let counter: number = 0;
+  if(segments.length > 1){
+    segments.forEach(s => {
+      if(counter != 0) {
+        let t = s.flightSegment.departure.iataCode;
+        codes += t;
+        codes += ", ";
+      }
+      counter++;
+    });
+    
+  }
+
+  if(codes != ""){
+    codes = codes.substring(0, codes.length-2);
+  }
+
+  return codes;
 }
