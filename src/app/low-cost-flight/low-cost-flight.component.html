@@ -1,8 +1,8 @@
 <div *ngIf="loading" class="loading"><em>Loading data</em></div>
 
 <div class="row">
-  <div [ngClass]="{'col-sm-12 col-lg-9': flightsModel2 != undefined}" [ngClass]="{'col-sm-12 col-lg-12': flightsModel2 == undefined}">
-    <div class="flights" *ngFor="let flight of flightsModel2">
+  <div [ngClass]="{'col-sm-12 col-lg-9': flightsModel != undefined}" [ngClass]="{'col-sm-12 col-lg-12': flightsModel == undefined}">
+    <div class="flights" *ngFor="let flight of flightsModel">
       <div class="plane">
         <img src="../../assets/img/airplane-icon.png" alt="">
         <div class="flight-route">
@@ -76,7 +76,10 @@
           <div class="price-availability">
             <div class="inner">
                 <div class="price">
-                  <span>from <span class="currency">{{ flight.Cijena | currency: 'EUR' }}</span></span>
+                  <span *ngIf="flight.Valuta == 'EUR'">from <span class="currency">{{ flight.Cijena | currency: 'EUR' }}</span></span>
+                  <span *ngIf="flight.Valuta == 'USD'">from <span class="currency">{{ flight.Cijena | currency: 'USD' }}</span></span>
+                  <span *ngIf="flight.Valuta == 'HRK'">from <span class="currency">{{ flight.Cijena | currency: 'HRK' }}</span></span>
+                  <span *ngIf="flight.Valuta == 'BAM'">from <span class="currency">{{ flight.Cijena | currency: 'BAM' }}</span></span>
                 </div>
                 <div class="availability">
                   <span class="availability-text">Available seats: </span><span class="seats">{{ flight.SlobodnaMjesta }}</span>
@@ -87,7 +90,7 @@
       </div>
     </div>
   </div>
-  <div [ngClass]="{'col-sm-12 col-lg-3': flightsModel2 != undefined, 'col-sm-12 col-lg-12': flightsModel2 == undefined}">
+  <div [ngClass]="{'col-sm-12 col-lg-3': flightsModel != undefined, 'col-sm-12 col-lg-12': flightsModel == undefined}">
     <form class="form" (ngSubmit)="fetchData()">
       <div class="form-row">
         <div class="form-group">
@@ -102,12 +105,12 @@
 
         <div class="form-group">
           <label for="departureDate">Datum polaska <span class="field-required">*</span></label>
-          <ng-datepicker name="departureDate" [options]="options" [(ngModel)]="departureDate" [ngModelOptions]="{standalone: true}"></ng-datepicker>
+          <ng-datepicker name="departureDate" [(ngModel)]="departureDate" [ngModelOptions]="{standalone: true}"></ng-datepicker>
         </div>
   
         <div class="form-group">
           <label for="returnDate">Datum povratka</label>
-          <ng-datepicker name="returnDate" [options]="opts" [(ngModel)]="returnDate" [ngModelOptions]="{standalone: true}"></ng-datepicker>
+          <ng-datepicker name="returnDate" [(ngModel)]="returnDate" [ngModelOptions]="{standalone: true}"></ng-datepicker>
         </div>
         <div class="form-group">
           <label for="passengers">Broj putnika</label>
