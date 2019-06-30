@@ -1,5 +1,3 @@
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { Model } from './model';
 import { FlightOffersModel } from "./low-cost-flight.component";
 import { DatePipe } from '@angular/common';
 
